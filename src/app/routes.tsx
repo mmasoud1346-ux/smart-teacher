@@ -1,8 +1,8 @@
-import { createBrowserRouter } from 'react-router'
+import { createHashRouter } from 'react-router'
 import DashboardPage from '../App'
 import SectionPage from '../pages/SectionPage'
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   { path: '/', Component: DashboardPage },
   { path: '/tools', element: <SectionPage section="tools" /> },
   { path: '/courses', element: <SectionPage section="courses" /> },

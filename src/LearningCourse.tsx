@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BookOpen, CheckCircle2 } from 'lucide-react'
-import { learningCourses } from './content'
+import { assetUrl, learningCourses } from './content'
 import { isStringArray, useLocalState } from './storage'
 
 export default function LearningCourse({ courseId }: { courseId: string }) {
@@ -10,7 +10,7 @@ export default function LearningCourse({ courseId }: { courseId: string }) {
   const progress = course.lessons.filter((_, i) => completed.includes(`${course.id}:${i}`)).length
   const lesson = course.lessons[index]
   return <>
-    <img className="course-cover" src={course.image} alt="" />
+    <img className="course-cover" src={assetUrl(course.image)} alt="" />
     <span className="course-label">مسیر متنی رایگان · {course.level}</span>
     <h2>{course.title}</h2>
     <p className="dialog-description">۳ درس کوتاه همراه تمرین؛ این نسخه ویدیو یا گواهی پایان دوره ندارد. پیشرفت فقط در همین مرورگر ذخیره می‌شود.</p>

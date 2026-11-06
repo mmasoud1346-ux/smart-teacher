@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router'
 import Modal from './Modal'
 import ToolWorkspace from './ToolWorkspace'
 import LearningCourse from './LearningCourse'
-import { downloadText, normalizeSearch, resolveTool, learningCourses } from './content'
+import { assetUrl, downloadText, normalizeSearch, resolveTool, learningCourses } from './content'
 import { defaultProfile, defaultPreferences, isProfile, isPreferences, isBoolean, isDrafts, isStringArray, useLocalState, type Draft } from './storage'
 import {
   ArrowLeft,
@@ -256,7 +256,7 @@ export default function App() {
       <main className="dashboard">
         <section className="hero">
           <div className="hero-photo">
-            <img src="/images/arsha-poster.png" alt="پوستر انتزاعی هوش مصنوعی Arsha" />
+            <img src={assetUrl('/images/arsha-poster.png')} alt="پوستر انتزاعی هوش مصنوعی Arsha" />
             <div className="ai-badge">AI</div>
             <div className="ai-menu" dir="ltr">
               <span><Bot size={16} /> Create Lesson</span>
@@ -323,7 +323,7 @@ export default function App() {
                     key={course.title}
                     onClick={() => setDialog({ type: 'course', ...course })}
                   >
-                    <img src={course.image} alt="" />
+                    <img src={assetUrl(course.image)} alt="" />
                     <span className="course-copy">
                       <strong>{course.title}</strong>
                       <small><Clock3 size={14} /> {course.meta}</small>
@@ -459,7 +459,7 @@ export default function App() {
 
             {dialog.type === 'video' && (
               <>
-                <img className="course-cover" src="/images/arsha-poster.png" alt="پوستر معرفی دستیار مدرس" />
+                <img className="course-cover" src={assetUrl('/images/arsha-poster.png')} alt="پوستر معرفی دستیار مدرس" />
                 <h2>تدریس منظم‌تر در سه قدم</h2>
                 <p className="dialog-description">۱. موضوع و مخاطب را در ابزارها وارد کنید. ۲. پیش‌نویس را بازبینی و ویرایش کنید. ۳. نتیجه را ذخیره یا دانلود کنید.</p>
                 <p className="local-mode">ویدیوی معرفی هنوز ارائه نشده است؛ راهنمای متنی در دسترس است.</p>

@@ -1,7 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { buildMaterial, learningCourses, normalizeSearch, resourceLibrary, resolveTool, toolCatalog } from './content'
+import { assetUrl, buildMaterial, learningCourses, normalizeSearch, resourceLibrary, resolveTool, toolCatalog } from './content'
 import { isDrafts, isPreferences, isProfile, isStringArray } from './storage'
+
+test('assets resolve correctly on root hosting and GitHub Pages', () => {
+  assert.equal(assetUrl('/images/course-ai.jpg', '/'), '/images/course-ai.jpg')
+  assert.equal(assetUrl('/images/course-ai.jpg', '/smart-teacher/'), '/smart-teacher/images/course-ai.jpg')
+  assert.equal(assetUrl('images/course-ai.jpg', '/smart-teacher/'), '/smart-teacher/images/course-ai.jpg')
+})
 
 for (const tool of toolCatalog) {
   test(`${tool.id}: builds topic-specific, transparent material`, () => {
