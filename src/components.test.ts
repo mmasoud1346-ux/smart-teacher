@@ -82,3 +82,14 @@ test('modal falls back instead of crashing when the dialog API is missing', asyn
   const html = renderToString(createElement(MemoryRouter, null, createElement(SectionPage, { section: 'resources' })))
   assert.ok(html.includes('دانلود'))
 })
+
+test('workspace stays in local mode with no AI endpoint and builds output', async () => {
+  let view!: ReactTestRenderer
+  await act(async () => { view = create(createElement(ToolWorkspace, { id: 'lesson' })) })
+  assert.equal(view.root.findAllByProps({ 'aria-label': 'ویرایش خروجی' }).length, 0)
+  assert.equal(view.root.findAllByProps({ className: 'ai-toggle' }).length, 0)
+  await act(async () => { view.root.findAllByType('textarea')[0].props.onChange(event('فتوسنتز')) })
+  await act(async () => { view.root.findByType('form').props.onSubmit(event('')) })
+  assert.ok(view.root.findByProps({ 'aria-label': 'ویرایش خروجی' }).props.value.includes('فتوسنتز'))
+  await act(async () => view.unmount())
+})

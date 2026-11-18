@@ -6,3 +6,5 @@ uploads/
 .env.*
 *.local
 *.log
+
+# AI proxy (server/) needs no packages; site stays local without VITE_AI_ENDPOINT

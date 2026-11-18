@@ -2167,6 +2167,17 @@ button:disabled { cursor: not-allowed; opacity: .6; }
 .native-dialog .dialog-card { width: 100%; max-width: none; max-height: none; overflow: visible; margin: 0; }
 .local-mode { background: #eef6ff; color: #315479; padding: 14px 16px; border: 1px solid #d8e8ff; border-radius: 12px; font-size: 12px; line-height: 1.9; margin: 12px 0 20px; }
 .local-mode strong { color: #195db5; }
+.ai-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #17416f;
+  cursor: pointer;
+}
+.ai-toggle input { width: 16px; height: 16px; accent-color: #1469ee; }
 .workspace-form { display: grid; gap: 16px; }
 .workspace-form label { display: grid; gap: 8px; font-size: 13px; font-weight: 600; }
 .workspace-form input, .workspace-form textarea, .result-editor { width: 100%; border: 1px solid #dce7f4; background: #f8fbff; color: #15395e; padding: 12px; border-radius: 10px; min-width: 0; }

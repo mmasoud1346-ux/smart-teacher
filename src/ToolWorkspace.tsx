@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CheckCircle2, Download, FileText, Save, Sparkles, Trash2 } from 'lucide-react'
 import { buildMaterial, downloadText, toolCatalog, type ToolId } from './content'
+import { aiEnabled, generateWithAi } from './ai'
 import { isDrafts, useLocalState, type Draft } from './storage'
 
 export default function ToolWorkspace({ id }: { id: ToolId }) {
@@ -10,18 +11,49 @@ export default function ToolWorkspace({ id }: { id: ToolId }) {
   const [duration, setDuration] = useState(45)
   const [result, setResult] = useState('')
   const [status, setStatus] = useState('')
+  const [useAi, setUseAi] = useState(aiEnabled)
+  const [busy, setBusy] = useState(false)
   const [drafts, setDrafts, storageError] = useLocalState<Draft[]>('drafts', [], isDrafts)
+
+  const generate = async () => {
+    if (busy) return
+    const input = { topic, audience, duration }
+    if (!useAi) {
+      try { setResult(buildMaterial(id, input)); setStatus('پیش‌نویس آماده شد؛ پیش از استفاده بازبینی کنید.') }
+      catch (error) { setStatus((error as Error).message) }
+      return
+    }
+    setBusy(true)
+    setStatus('در حال تولید با هوش مصنوعی…')
+    try {
+      setResult(await generateWithAi(id, input))
+      setStatus('پاسخ هوش مصنوعی آماده شد؛ صحت علمی آن را بررسی کنید.')
+    } catch (error) {
+      const message = (error as Error).message
+      setStatus(message === 'ai_not_configured' ? 'سرویس هوش مصنوعی تنظیم نشده است.' : message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return <>
     <div className="dialog-heading"><span className="dialog-icon"><Sparkles /></span><div><h2>{tool.title}</h2><p>{tool.text}</p></div></div>
-    <div className="local-mode"><strong>حالت محلی · بدون اتصال به مدل AI</strong><p>خروجی از قالب‌های آموزشی ساخته می‌شود، نه مدل هوش مصنوعی. اطلاعات در همین مرورگر می‌ماند.</p></div>
-    <form className="workspace-form" onSubmit={event => {
-      event.preventDefault()
-      try { setResult(buildMaterial(id, { topic, audience, duration })); setStatus('پیش‌نویس آماده شد؛ پیش از استفاده بازبینی کنید.') }
-      catch (error) { setStatus((error as Error).message) }
-    }}>
+    <div className="local-mode">
+      <strong>{useAi ? 'حالت هوش مصنوعی' : 'حالت محلی · بدون اتصال به مدل AI'}</strong>
+      <p>{useAi
+        ? 'متن درخواست برای ساخت پیش‌نویس به سرویس هوش مصنوعی سایت ارسال می‌شود. اطلاعات شناسایی‌کنندهٔ دانش‌آموزان را وارد نکنید.'
+        : 'خروجی از قالب‌های آموزشی ساخته می‌شود، نه مدل هوش مصنوعی. اطلاعات در همین مرورگر می‌ماند.'}</p>
+      {aiEnabled && (
+        <label className="ai-toggle">
+          <input type="checkbox" checked={useAi} disabled={busy} onChange={event => setUseAi(event.target.checked)} />
+          استفاده از هوش مصنوعی برای تولید متن
+        </label>
+      )}
+    </div>
+    <form className="workspace-form" onSubmit={event => { event.preventDefault(); void generate() }}>
       <label>{id === 'analysis' ? 'متن برای بررسی' : 'موضوع درس یا دوره'}<textarea required maxLength={4000} value={topic} onChange={event => setTopic(event.target.value)} placeholder={id === 'analysis' ? 'متن آموزشی خود را اینجا قرار دهید…' : 'مثلاً فتوسنتز، کسرها یا مهارت حل مسئله…'} /></label>
       <div className="form-row"><label>مخاطب<input required maxLength={120} value={audience} onChange={event => setAudience(event.target.value)} /></label><label>زمان (دقیقه)<input type="number" min={10} max={180} required value={duration} onChange={event => setDuration(event.target.valueAsNumber)} /></label></div>
-      <button className="dialog-primary full" type="submit"><FileText size={18} /> ساخت پیش‌نویس</button>
+      <button className="dialog-primary full" type="submit" disabled={busy}>{busy ? 'در حال تولید…' : <><FileText size={18} /> {useAi ? 'ساخت پیش‌نویس با هوش مصنوعی' : 'ساخت پیش‌نویس'}</>}</button>
     </form>
     {result && <div className="generated-result">
       <strong><CheckCircle2 size={18} /> پیش‌نویس قابل ویرایش</strong>
