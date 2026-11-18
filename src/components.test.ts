@@ -77,3 +77,8 @@ test('malformed local storage cannot crash a workspace', () => {
   const html = renderToString(createElement(ToolWorkspace, { id: 'quiz' }))
   assert.ok(html.includes('هنوز پیش‌نویسی ذخیره نکرده‌اید'))
 })
+
+test('modal falls back instead of crashing when the dialog API is missing', async () => {
+  const html = renderToString(createElement(MemoryRouter, null, createElement(SectionPage, { section: 'resources' })))
+  assert.ok(html.includes('دانلود'))
+})

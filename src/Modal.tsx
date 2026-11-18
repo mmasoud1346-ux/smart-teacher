@@ -1,18 +1,30 @@
 import { useEffect, useRef, type ReactNode } from 'react'
 import { X } from 'lucide-react'
 
+type DialogElementWithModal = HTMLDialogElement & { showModal?: () => void }
+
+/**
+ * Modal keeps the app usable on browsers and in-app webviews that do not
+ * implement the <dialog> modal API: it falls back to rendering the panel in
+ * normal flow instead of throwing during render.
+ */
 export default function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) {
   const ref = useRef<HTMLDialogElement>(null)
   const close = useRef(onClose)
   close.current = onClose
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null
-    const dialog = ref.current!
-    dialog.showModal()
+    const dialog = ref.current as DialogElementWithModal | null
+    const canUseModal = !!dialog && typeof dialog.showModal === 'function'
     const overflow = document.body.style.overflow
+    if (dialog && canUseModal) {
+      dialog.showModal()
+    } else {
+      dialog?.setAttribute('open', '')
+    }
     document.body.style.overflow = 'hidden'
     return () => {
-      dialog.close()
+      if (dialog && canUseModal && dialog.open) dialog.close()
       document.body.style.overflow = overflow
       previous?.focus()
     }
